@@ -1,0 +1,88 @@
+<script>
+    //
+    function student_register() {
+        //
+        let student_code = $('#student_code').val();
+        let student_fname = $('#student_fname').val();
+        let student_lname = $('#student_lname').val();
+        let student_gender = $('#student_gender').val();
+        let student_date = $('#student_date').val();
+        let student_class = $('#student_class').val();
+        let student_phone = $('#student_phone').val();
+        let student_email = $('#student_email').val();
+        //
+        if (student_code != "" && student_fname != "" && student_lname != "" && student_gender != "" && student_date != "" && student_class != "" && student_phone != "" && student_email != "") {
+            $.ajax({
+                type: "post",
+                url: '../../controller/student/getDataRegister.php',
+                data: {
+                    student_code: student_code,
+                    student_fname: student_fname,
+                    student_lname: student_lname,
+                    student_gender: student_gender,
+                    student_date: student_date,
+                    student_class: student_class,
+                    student_phone: student_phone,
+                    student_email: student_email,
+                },
+                success: function(response) {
+                    console.log(response);
+                }
+            });
+            //
+            return true;
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'warning...',
+                text: 'กรอกข้อมูลให้ครบ',
+            });
+            //
+            return false;
+        }
+    }
+    //
+    $(document).ready(function() {
+        //
+        $('#form-register-student').submit(function(e) {
+            e.preventDefault();
+            //
+            var student_img = new FormData();
+            var files = $('#file')[0].files;
+            //
+            student_img.append('file', files[0]); 
+            //
+            if (student_register() == true) {
+                $.ajax({
+                    url: '../../controller/student/getDataRegister_image.php',
+                    type: 'post',
+                    data: student_img,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response) {
+                            //console.log(response);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'success...',
+                                text: 'ลงทะเบียนสำเร็จ',
+                            });
+                            setInterval(function() {
+                                window.location = "../../view/student/login_student.php";
+                            }, 2000);
+
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'อัพโหลดรูปภาพไม้ได้',
+                            });
+                        }
+                    }
+                });
+            }
+            //
+        });
+        //
+    });
+</script>
